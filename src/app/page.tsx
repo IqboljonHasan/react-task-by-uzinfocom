@@ -22,14 +22,6 @@ interface Counts {
   user_id: string;
   count: number;
 }
-interface ColumnData {
-  id: string;
-  name: string;
-}
-
-interface RowData {
-  [key: string]: string | number; // Adjust based on your API response
-}
 
 type UserName = {
   avatar: string
@@ -41,97 +33,8 @@ type CountsData = {
   id: string
   name: UserName
   total: number
-  [key: string]: any
+  [key: string]: unknown
 }
-
-// export const payments: CountsData[] = [
-//   {
-//     id: "728ed52f",
-//     name: {
-//       avatar: "https://randomuser.me/api/portraits",
-//       first_name: "Maurice",
-//       last_name: "Bishop"
-//     },
-//     category: {
-//       id: 1,
-//       name: "Category 1"
-//     },
-//     total: 6000
-//   }
-
-// ]
-// export const columnsPayments: ColumnDef<Payment>[] = [
-//   {
-//     id: "name",
-//     accessorKey: "name",
-//     header: "Name",
-//     cell: ({ row }) => {
-//       const name: DrDsName = row.getValue('name')
-//       return <div className="flex items-center gap-x-2">
-//         {
-//           name.avatarSrc ?
-//             <Image width={36} height={36} src={name.avatarSrc} title="Avatar of" alt="" className="rounded-full" />
-//             :
-//             <div className="flex size-9 items-center justify-center rounded-full border-[0.85px] border-[rgba(23,24,27,0.16)] bg-[rgba(17,24,39,0.08)] px-2 py-1 text-xs" >
-//               {name.name[0]}
-//             </div>
-//         }
-//         <div className="flex flex-col items-start" >
-//           <div className="text-ellipsis text-nowrap text-xs font-medium" >
-//             {name.name}
-//           </div>
-//           {/* <div className="font-400 flex gap-1 text-xs text-[#6B7280]" >
-//                         <ShieldTick variant="Bold" className='size-4 text-green-500' />  {name.verified ? "Profile verified" : ""}
-//                     </div> */}
-//         </div>
-
-//       </div>
-//     },
-//   },
-//   {
-//     accessorKey: "position",
-//     header: "Position",
-//   },
-//   {
-//     accessorKey: "salary",
-//     header: "Salary",
-//     cell: ({ row }) => {
-//       const amount = parseFloat(row.getValue("salary"));
-//       const formatted = new Intl.NumberFormat("en-US", {
-//         style: "currency",
-//         currency: "USD",
-//       }).format(amount);
-//       return formatted;
-//     },
-//   },
-//   {
-//     accessorKey: "status",
-//     header: "Status",
-//     cell: ({ row }) => {
-//       const status: boolean = row.getValue('status')
-//       return <div className="flex items-center gap-x-2">
-//         {
-//           status ?
-//             <div className="flex items-center justify-center rounded border border-[#22C55E1f] bg-[#22C55E1F] px-4 py-1 text-xs font-medium text-[#22C55E]">
-//               Paid
-//             </div>
-//             :
-//             <div className="flex items-center justify-center rounded border border-[#DC26261F] bg-[#DC262614] px-4 py-1 text-xs font-medium text-[#DC2626] ">
-//               Unpaid
-//             </div>
-//         }
-//       </div>
-//     },
-//   },
-//   {
-//     id: "actions",
-//     cell: ({ row }) => (
-//       <Button variant="ghost" className="size-8 p-0">
-//         <MoreHorizontal className="size-4" />
-//       </Button>
-//     ),
-//   },
-// ];
 
 const LandingPage = () => {
   const [categories, setCategories] = useState<Category[]>();
@@ -206,15 +109,16 @@ const LandingPage = () => {
 
 
         const data: CountsData[] = usersData.map((user) => {
-          const dd = {
+          const dd: CountsData = {
             id: user.id.toString(),
             name: {
               avatar: user.avatar,
               firstName: user.first_name,
               lastName: user['last name']
             },
+            total: 0,
           }
-          return dd
+          return dd;
         });
 
         data.push({
@@ -236,7 +140,7 @@ const LandingPage = () => {
 
           const totalRow = data.find((d) => d.id == "total");
           if (totalRow) {
-            totalRow[count.category_id] = (totalRow[count.category_id] || 0) + count.count;
+            totalRow[count.category_id] = ((totalRow[count.category_id] as number) || 0) + count.count;
             totalRow.total = (totalRow.total || 0) + count.count;
           }
         });
@@ -255,7 +159,7 @@ const LandingPage = () => {
 
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     console.log({ count });
 
@@ -381,7 +285,7 @@ const LandingPage = () => {
             Siz IT o&#39;quv kursini tugatdingiz yoki Internet tarmog&#39;i orqali mustaqil o&#39;rgandingiz, ammo ishga joylashishda qiyinchiliklarga uchrayapsizmi? Biz sizga yordam beramiz. Ushbu loyiha qobiliyatli yoshlarni topib, yetuk kadrlar bo&#39;lib yetishishiga yordam berish uchun tashkil qilindi.
           </p>
           <div className="grid grid-cols-2 gap-4">
-            <img src="/api/placeholder/200/150" alt="Workspace" className="rounded-lg" />
+            <Image src="/images/consulting.png" width={300} height={500} alt="Workspace" className="rounded-lg" />
             <div className="bg-blue-100 rounded-lg flex items-center justify-center">
               {/* <Book className="w-12 h-12 text-blue-600" /> */}
             </div>
@@ -393,14 +297,14 @@ const LandingPage = () => {
             Aksariyat kompaniyalar ishga joylashishda sizdan ish staji va portfolio so&#39;raydi
           </h2>
           <p className="text-gray-600 mb-4">
-            Tabiyki endigini bu sohaga kirib kelayotgan internlarda bular mavjud emas. Ma'lum bir ish stajiga ega bo'lish va turli xil qiziqarli lohiyalardan iborat portfolioni hosil qilish uchun ushbu loyihada amaliyot o'tashni taklif qilamiz.
+            Tabiyki endigini bu sohaga kirib kelayotgan internlarda bular mavjud emas. Ma&#39;lum bir ish stajiga ega bo&#39;lish va turli xil qiziqarli lohiyalardan iborat portfolioni hosil qilish uchun ushbu loyihada amaliyot o&#39;tashni taklif qilamiz.
 
           </p>
           <p className="text-gray-600 mb-4">
-            Amaliyotchilar soni chegaralangan va konkurs asosida saralab olinadi. Eng yuqori ball to'plagan 10 kishi bepul amaliyot o'tash imkoniyatiga ega bo'ladi.
+            Amaliyotchilar soni chegaralangan va konkurs asosida saralab olinadi. Eng yuqori ball to&#39;plagan 10 kishi bepul amaliyot o&#39;tash imkoniyatiga ega bo&#39;ladi.
           </p>
           <div className="flex items-center mt-4">
-            <img src="/api/placeholder/150/150" alt="Professional" className="rounded-lg" />
+          <Image src="/images/intern-girl-laptop.png" width={300} height={500} alt="Workspace" className="rounded-lg" />
             <div className="bg-blue-100 p-4 rounded-lg ml-4">
               {/* <HandshakeIcon className="w-12 h-12 text-blue-600" /> */}
             </div>
