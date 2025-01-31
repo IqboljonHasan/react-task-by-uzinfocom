@@ -24,6 +24,7 @@ interface Counts {
 }
 
 type UserName = {
+  id: string
   avatar: string
   firstName: string
   lastName: string
@@ -44,6 +45,7 @@ const LandingPage = () => {
   const [category, setCategory] = useState<Category>();
   const [user, setUser] = useState<User>();
   const [count, setCount] = useState<number>();
+  const [formError, setFormError] = useState<string>();
 
   const [columns, setColumns] = useState<ColumnDef<CountsData>[]>([]);
   const [data, setData] = useState<CountsData[]>([]);
@@ -61,10 +63,10 @@ const LandingPage = () => {
 
         const countsResponse = await fetch(apiUrl + "/counts");
         const countsData: Counts[] = await countsResponse.json();
+
         setCategories(categoriesData);
         setUsers(usersData);
         setCounts(countsData);
-
 
         const categoryColumns: ColumnDef<CountsData>[] = categoriesData.map((item) => ({
           id: item.id.toString(),
@@ -86,19 +88,23 @@ const LandingPage = () => {
               return <div className="flex items-center gap-x-2">
                 {name.avatar && name.avatar.length
                   ? <Image src={name.avatar} width={20} height={20} alt="" className="w-8 h-8 rounded-full" />
-                  : name.firstName == 'total' && name.lastName == 'total' ? <></>
-                    :
-                    <div className="rounded-full bg-green-800 text-white uppercase text-center size-6">{name?.firstName[0]} {name?.lastName[0]}</div>}
-                <span>{name.firstName == 'total' && name.lastName == 'total' ? <>Общее</> : <div>{name.firstName} {name.lastName} </div>}</span>
+                  : name.id == 'subtotal' ? <></>
+                    : <div className="rounded-full bg-green-800 text-white uppercase text-center size-6">
+                      {name?.firstName[0]} {name?.lastName[0]}
+                    </div>
+                }
+                <span className='text-nowrap'>{name.id == 'subtotal' ? <>Общее  (Category&apos;s total)</> : <div>{name.firstName} {name.lastName} </div>}</span>
               </div>;
             },
           }
         ];
+
         columns.push(...categoryColumns);
+
         columns.push({
           id: "total",
           accessorKey: "total",
-          header: "Total",
+          header: "(User's) Total",
           cell: ({ row }) => {
             const total: number = row.getValue("total");
             return <div className="text-center">{total}</div>;
@@ -112,6 +118,7 @@ const LandingPage = () => {
           const dd: CountsData = {
             id: user.id.toString(),
             name: {
+              id: user.id.toString(),
               avatar: user.avatar,
               firstName: user.first_name,
               lastName: user['last name']
@@ -122,11 +129,12 @@ const LandingPage = () => {
         });
 
         data.push({
-          id: "total",
+          id: "subtotal",
           name: {
+            id: "subtotal",
             avatar: "",
-            firstName: "total",
-            lastName: "total"
+            firstName: "subtotal",
+            lastName: "subtotal"
           },
           total: 0,
         });
@@ -161,36 +169,15 @@ const LandingPage = () => {
 
   const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    console.log({ count });
-
-    // let tt = counts?.find((c) => c.user_id == user.id.toString() && c.category_id == category.id.toString());
-    // console.log({ tt });
-    // const updatedCounts = counts.
-    //   map((c) => {
-    //     if (c.user_id == user.id.toString() && c.category_id == category.id.toString()) {
-    //       return { ...c, count };
-    //     }
-    //     return c;
-    //   });
-
-
-    // updatedCounts.forEach((countt) => {
-    //   const item = data.find((d) => d.id == countt.user_id);
-    //   if (item) {
-    //     item[countt.category_id] = countt.count;
-    //     item.total = (item.total || 0) + countt.count;
-    //   }
-
-    //   const totalRow = data.find((d) => d.id == "total");
-    //   if (totalRow) {
-    //     totalRow[countt.category_id] = (totalRow[countt.category_id] || 0) + countt.count;
-    //     totalRow.total = (totalRow.total || 0) + countt.count;
-    //   }
-    // });
-
-    // setCounts(updatedCounts);
-    // setData(data);
-
+    if (!user || !category || count === undefined) {
+      setFormError(
+        !user ? "Please select a user" :
+          !category ? "Please select a category" :
+            "Please enter a count value"
+      );
+      return;
+    }
+    setFormError("");
 
     // fetch(`${apiUrl}/counts`, {
     //   method: 'POST',
@@ -201,6 +188,28 @@ const LandingPage = () => {
     // })
     //   .then(res => res.json())
     //   .then(data => console.log(data));
+
+    let oldCount: number
+    const updatedData = data.map((c) => {
+      if (c.name.id == user.id.toString()) {
+        console.log({ c });
+        oldCount = Number(c[category.id.toString()]) || 0;
+        c.total = (c.total || 0) - oldCount + count;
+        c[category.id.toString()] = count;
+
+      }
+      if (c.name.id == "subtotal") {
+        console.log({ c });
+        const oldSubTotal = (Number(c[category.id.toString()]) || 0);
+        c[category.id.toString()] = oldSubTotal - oldCount + count;
+        c.total = (c.total || 0) - oldCount + count;
+      }
+      // 31623   -13573   -160426
+      return c;
+    });
+
+    setData(updatedData);
+
   };
 
   useEffect(() => {
@@ -219,12 +228,6 @@ const LandingPage = () => {
       }
     }
   }, [user, category, counts]);
-
-  const participants = [
-    { id: 1, name: 'Алинов Азал', scores: [500, -300, 600, 0, 1200, 0], total: 6000 },
-    { id: 2, name: 'Ркулина Романутко', scores: [500, -400, 600, 1200, 1200, 1800], total: 6000 },
-    // Add more participants as needed
-  ];
 
   return (
     <div className="min-h-screen bg-white">
@@ -262,9 +265,6 @@ const LandingPage = () => {
         </h1>
         <div className="flex justify-center items-center mb-8">
           <div className="flex -space-x-2">
-            {/* <UserCircle2 className="w-8 h-8 text-blue-500" />
-            <UserCircle2 className="w-8 h-8 text-green-500" />
-            <UserCircle2 className="w-8 h-8 text-yellow-500" /> */}
           </div>
           <span className="ml-4 text-gray-600">человек уже стали участниками групп по своим направлениям</span>
         </div>
@@ -286,9 +286,6 @@ const LandingPage = () => {
           </p>
           <div className="grid grid-cols-2 gap-4">
             <Image src="/images/consulting.png" width={300} height={500} alt="Workspace" className="rounded-lg" />
-            <div className="bg-blue-100 rounded-lg flex items-center justify-center">
-              {/* <Book className="w-12 h-12 text-blue-600" /> */}
-            </div>
           </div>
         </div>
 
@@ -304,10 +301,7 @@ const LandingPage = () => {
             Amaliyotchilar soni chegaralangan va konkurs asosida saralab olinadi. Eng yuqori ball to&#39;plagan 10 kishi bepul amaliyot o&#39;tash imkoniyatiga ega bo&#39;ladi.
           </p>
           <div className="flex items-center mt-4">
-          <Image src="/images/intern-girl-laptop.png" width={300} height={500} alt="Workspace" className="rounded-lg" />
-            <div className="bg-blue-100 p-4 rounded-lg ml-4">
-              {/* <HandshakeIcon className="w-12 h-12 text-blue-600" /> */}
-            </div>
+            <Image src="/images/intern-girl-laptop.png" width={300} height={500} alt="Workspace" className="rounded-lg" />
           </div>
         </div>
       </section>
@@ -335,6 +329,7 @@ const LandingPage = () => {
           <div className="space-y-2">
             <input type="number" placeholder="Count" value={count} onChange={(e) => setCount(Number(e.target.value))} className="w-full p-3 border rounded-lg" />
           </div>
+          {formError && <p className="text-red-500">{formError}</p>}
           <button className="w-full bg-blue-600 text-white py-3 rounded-lg" onClick={handleSubmit}>
             SET
           </button>
@@ -342,48 +337,13 @@ const LandingPage = () => {
       </section>
 
       {/* Participants Rating Table */}
-      <section className="max-w-screen-2xl mx-auto px-4 py-20">
+      <section className=" mx-auto px-4 py-20">
         <h2 className="text-2xl font-bold mb-8">Рейтинг участников</h2>
         {loading ? (
           <Skeleton className="w-full h-96" />
         ) : (
           <UserTable columns={columns} data={data} />
         )}
-        <div className="overflow-x-auto hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="text-sm text-gray-600">
-                <th className="py-2">#</th>
-                <th className="py-2">User</th>
-                {[1, 2, 3, 4, 5, 6].map(cat => (
-                  <th key={cat} className="py-2">Category {cat}</th>
-                ))}
-                <th className="py-2">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {participants.map(participant => (
-                <tr key={participant.id} className="border-t">
-                  <td className="py-3 text-center">{participant.id}</td>
-                  <td className="py-3">
-                    <div className="flex items-center">
-                      {/* <UserCircle2 className="w-6 h-6 mr-2" /> */}
-                      {participant.name}
-                    </div>
-                  </td>
-                  {participant.scores.map((score, idx) => (
-                    <td key={idx} className="py-3 text-center">
-                      <span className={score < 0 ? 'text-red-500' : 'text-green-500'}>
-                        {score > 0 ? `+${score}` : score}
-                      </span>
-                    </td>
-                  ))}
-                  <td className="py-3 text-center">{participant.total}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       </section>
 
       {/* Footer */}
