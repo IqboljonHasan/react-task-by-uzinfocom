@@ -81,7 +81,7 @@ const LandingPage = () => {
           },
           cell: ({ row }) => {
             const count: number = row.getValue(item.id.toString());
-            return <div className={"text-center " + (count > 0 ? 'text-green-400' : 'text-red-400')}>{count || 0}</div>;
+            return <div className={"text-center p-4 leading-8 font-semibold text-sm " + (count > 0 ? "" : count == 0 ? 'bg-green-100 text-green-400' : 'bg-red-100 text-red-400')}>{count > 0 ? ("+" + count) : count}</div>;
           },
           sortingFn: (rowA, rowB, columnId) => {
             const a = Number(rowA.getValue(columnId)) || 0;
@@ -102,30 +102,32 @@ const LandingPage = () => {
 
         const columns: ColumnDef<CountsData>[] = [
           {
+            id: "number",
+            accessorKey: "number",
+            header: "№",
+            cell: ({ row }) => {
+              return <div className="px-4 text-center font-semibold text-sm">{row.index + 1}</div>;
+            },
+          },
+          {
             id: "name",
             accessorKey: "name",
-            header: ({ column }) => {
-              return (
-                <Button
-                  variant="ghost"
-                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                  Name
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-              )
-            },
+            header: "",
             cell: ({ row }) => {
               const name: UserName = row.getValue("name");
-              return <div className="flex items-center gap-x-2">
-                {name.avatar && name.avatar.length
+              return <div className="flex items-center gap-x-2 py-4 px-2">
+                <Avatar className="w-8 h-8">
+                  <AvatarImage src={name.avatar} alt="@shadcn" />
+                  <AvatarFallback>{name?.firstName[0]} {name?.lastName[0]}</AvatarFallback>
+                </Avatar>
+                {/* {name.avatar && name.avatar.length
                   ? <Image src={name.avatar} width={20} height={20} alt="" className="w-8 h-8 rounded-full" />
                   : name.id == 'subtotal' ? <></>
-                    : <div className="rounded-full bg-green-800 text-white uppercase text-center size-6">
+                    : <div className="rounded-full bg-green-800 text-white uppercase text-xs flex items-center justify-center size-6 tracking-tighter">
                       {name?.firstName[0]} {name?.lastName[0]}
                     </div>
-                }
-                <span className='text-nowrap'>{name.id == 'subtotal' ? <>Общее  (Category&apos;s total)</> : <div>{name.firstName} {name.lastName} </div>}</span>
+                } */}
+                <span className='text-nowrap font-semibold text-sm '>{name.id == 'subtotal' ? <>Общее  (Category&apos;s total)</> : <div>{name.firstName} {name.lastName} </div>}</span>
               </div>;
             },
             footer: () =>
@@ -151,7 +153,7 @@ const LandingPage = () => {
           },
           cell: ({ row }) => {
             const total: number = row.getValue("total");
-            return <div className="text-center">{total}</div>;
+            return <div className="text-center font-semibold text-sm">{total}</div>;
           },
           footer: ({ table }) => {
             const total = table
@@ -160,7 +162,7 @@ const LandingPage = () => {
               .flatRows.reduce((sum, row) => sum + (Number(row.getValue('total')) || 0), 0);
 
             return typeof total === "number" ? (
-              <div className="text-center ">{total}</div>
+              <div className="text-center font-semibold text-sm">{total}</div>
             ) : null;
           }
         });

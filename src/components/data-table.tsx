@@ -44,9 +44,9 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md ">
       <Table>
-        <TableHeader>
+        <TableHeader className="bg-[#F3F7F9]">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
@@ -66,13 +66,14 @@ export function DataTable<TData, TValue>({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
+            table.getRowModel().rows.map((row, index) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
+                className={index % 2 !== 0 ? "bg-[#F3F7F9]" : ""}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell key={cell.id} className="p-0 h-full border border-white text-semibold">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -88,10 +89,10 @@ export function DataTable<TData, TValue>({
         </TableBody>
         <TableFooter>
           {table.getFooterGroups().map((footerGroup) => (
-            <TableRow key={footerGroup.id}>
+            <TableRow key={footerGroup.id} className="bg-white">
               {footerGroup.headers.map((footer) => {
                 return (
-                  <TableCell key={footer.id}>
+                  <TableCell key={footer.id} className="py-5">
                     {flexRender(
                       footer.column.columnDef.footer,
                       footer.getContext()
