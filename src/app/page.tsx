@@ -5,7 +5,8 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { ColumnDef } from "@tanstack/react-table";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { ArrowUpDown } from "lucide-react"
+import { Button } from "@/components/ui/button";
 interface Category {
   id: number;
   name: string;
@@ -71,18 +72,53 @@ const LandingPage = () => {
         const categoryColumns: ColumnDef<CountsData>[] = categoriesData.map((item) => ({
           id: item.id.toString(),
           accessorKey: item.id.toString(),
-          header: item.name,
+          header: ({ column }) => {
+            return (
+              <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              >
+                {item.name}
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            )
+          },
           cell: ({ row }) => {
             const count: number = row.getValue(item.id.toString());
-            return <div className={"text-center " + (count > 0 ? 'text-green-400' : 'text-red-400')}>{count}</div>;
+            return <div className={"text-center " + (count > 0 ? 'text-green-400' : 'text-red-400')}>{count || 0}</div>;
           },
+          sortingFn: (rowA, rowB, columnId) => {
+            const a = Number(rowA.getValue(columnId)) || 0;
+            const b = Number(rowB.getValue(columnId)) || 0;
+            return a - b;
+          },
+          footer: ({ table }) => {
+            const total = table
+              .getColumn(item.id.toString())
+              ?.getFacetedRowModel()
+              .flatRows.reduce((sum, row) => sum + (Number(row.getValue(item.id.toString())) || 0), 0);
+
+            return typeof total === "number" ? (
+              <div className="text-center ">{total}</div>
+            ) : null;
+          }
         }));
 
         const columns: ColumnDef<CountsData>[] = [
           {
             id: "name",
             accessorKey: "name",
-            header: "Name",
+            header: ({ column }) => {
+              return (
+                <Button
+                  variant="ghost"
+                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                  Name
+                  <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+              )
+            },
             cell: ({ row }) => {
               const name: UserName = row.getValue("name");
               return <div className="flex items-center gap-x-2">
@@ -96,6 +132,8 @@ const LandingPage = () => {
                 <span className='text-nowrap'>{name.id == 'subtotal' ? <>Общее  (Category&apos;s total)</> : <div>{name.firstName} {name.lastName} </div>}</span>
               </div>;
             },
+            footer: () =>
+              <div className="">Sub Total</div>
           }
         ];
 
@@ -104,11 +142,31 @@ const LandingPage = () => {
         columns.push({
           id: "total",
           accessorKey: "total",
-          header: "(User's) Total",
+          header: ({ column }) => {
+            return (
+              <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              >
+                (User&apos;s) Total
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            )
+          },
           cell: ({ row }) => {
             const total: number = row.getValue("total");
             return <div className="text-center">{total}</div>;
           },
+          footer: ({ table }) => {
+            const total = table
+              .getColumn("total")
+              ?.getFacetedRowModel()
+              .flatRows.reduce((sum, row) => sum + (Number(row.getValue('total')) || 0), 0);
+
+            return typeof total === "number" ? (
+              <div className="text-center ">{total}</div>
+            ) : null;
+          }
         });
 
         setColumns(columns);
@@ -128,21 +186,21 @@ const LandingPage = () => {
           return dd;
         });
 
-        data.push({
-          id: "subtotal",
-          name: {
-            id: "subtotal",
-            avatar: "",
-            firstName: "subtotal",
-            lastName: "subtotal"
-          },
-          total: 0,
-        });
+        // data.push({
+        //   id: "subtotal",
+        //   name: {
+        //     id: "subtotal",
+        //     avatar: "",
+        //     firstName: "subtotal",
+        //     lastName: "subtotal"
+        //   },
+        //   total: 0,
+        // });
 
         countsData.forEach((count) => {
           const item = data.find((d) => d.id == count.user_id);
           if (item) {
-            item[count.category_id] = count.count;
+            item[count.category_id] = count.count || 0;
             item.total = (item.total || 0) + count.count;
           }
 

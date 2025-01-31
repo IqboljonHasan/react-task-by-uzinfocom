@@ -2,8 +2,10 @@
 
 import {
   ColumnDef,
+  SortingState,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
 
@@ -11,10 +13,12 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useState } from "react"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -25,10 +29,18 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+
+  const [sorting, setSorting] = useState<SortingState>([])
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
   })
 
   return (
@@ -74,6 +86,22 @@ export function DataTable<TData, TValue>({
             </TableRow>
           )}
         </TableBody>
+        <TableFooter>
+          {table.getFooterGroups().map((footerGroup) => (
+            <TableRow key={footerGroup.id}>
+              {footerGroup.headers.map((footer) => {
+                return (
+                  <TableCell key={footer.id}>
+                    {flexRender(
+                      footer.column.columnDef.footer,
+                      footer.getContext()
+                    )}
+                  </TableCell>
+                )
+              })}
+            </TableRow>
+          ))}
+        </TableFooter>
       </Table>
     </div>
   )
