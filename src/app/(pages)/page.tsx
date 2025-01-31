@@ -9,9 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Category, Counts, CountsData, User, UserName } from '@/lib/interfaces';
 import { TableSkeleton } from '@/components/table-skeleton';
-import Hero from '@/views/hero';
-import Features from '@/views/features';
-import Footer from '@/views/footer';
+import Hero from '@/components/views/hero';
+import Features from '@/components/views/features';
+import Footer from '@/components/views/footer';
 
 
 const LandingPage = () => {
@@ -252,7 +252,7 @@ const LandingPage = () => {
   }, [user, category, counts]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <>
       <Hero />
       <Features />
 
@@ -308,9 +308,7 @@ const LandingPage = () => {
           <UserTable columns={columns} data={data} />
         )}
       </section>
-
-      <Footer />
-    </div>
+    </>
   );
 };
 

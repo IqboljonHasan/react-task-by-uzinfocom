@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { gilroy } from "@/lib/font";
 import "./globals.css";
-import Header from "@/views/header";
+import Header from "@/components/views/header";
+import Footer from "@/components/views/footer";
 
 
 export const metadata: Metadata = {
@@ -20,7 +21,10 @@ export default function RootLayout({
         className={gilroy.className}
       >
         <Header />
-        {children}
+        <main className="min-h-screen bg-white">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );
