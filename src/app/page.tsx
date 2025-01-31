@@ -19,6 +19,16 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+import { Menu, X } from "lucide-react";
+import { motion } from "framer-motion";
+import Link from 'next/link';
+
+const NAV_ITEMS = [
+  { href: "/", label: "Reja" },
+  { href: "/requirements", label: "Qabul qilish talablari" },
+  { href: "/guidelines", label: "Ko'rsatmalar" },
+  { href: "/selection", label: "Saralash" },
+];
 interface Category {
   id: number;
   name: string;
@@ -63,6 +73,8 @@ const LandingPage = () => {
   const [columns, setColumns] = useState<ColumnDef<CountsData>[]>([]);
   const [data, setData] = useState<CountsData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
 
@@ -302,49 +314,81 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b">
+      <header className="border-b bg-white">
         <div className="max-w-[1160px] px-5 mx-auto flex justify-between items-center py-5">
-          <nav className="flex gap-8">
-            <a href="#" className="text-[#252A3B] text-lg font-semibold">Reja</a>
-            <a href="#" className="text-[#252A3B] text-lg font-semibold">Qabul qilish talablari</a>
-            <a href="#" className="text-[#252A3B] text-lg font-semibold">Ko&#39;rsatmalar</a>
-            <a href="#" className="text-[#252A3B] text-lg font-semibold">Saralash</a>
+          {/* Mobile Menu Button */}
+          <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">
+            {isOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+
+          {/* Navigation Links (Desktop) */}
+          <nav className="hidden md:flex gap-8">
+            {NAV_ITEMS.map((item) => (
+              <Link key={item.href} href={item.href} className="text-[#252A3B] text-lg font-semibold hover:text-blue-600">
+                {item.label}
+              </Link>
+            ))}
           </nav>
+
+          {/* Language Selector & Button */}
           <div className="flex gap-4 items-center">
             <Select defaultValue="uz">
               <SelectTrigger className="border-none shadow-none">
-                <SelectValue placeholder="Theme" />
+                <SelectValue placeholder="Language" />
               </SelectTrigger>
-              <SelectContent className='border-none'>
-                <SelectItem value="uz" >
-                  <div className='flex items-center gap-2'>
-                    <Image src={'/images/flag-uz.png'} width={16} height={16} alt="Uzbekistan Flag" />
-                    <span className='text-sm font-semibold'> O&#39;zbek Tili</span>
+              <SelectContent className="border-none">
+                <SelectItem value="uz">
+                  <div className="flex items-center gap-2">
+                    <Image src="/images/flag-uz.png" width={16} height={16} alt="Uzbekistan Flag" />
+                    <span className="text-sm font-semibold"> O'zbek Tili</span>
                   </div>
                 </SelectItem>
                 <SelectItem value="en">
-                  <div className='flex items-center gap-2'>
-                    <Image src={'/images/flag-uz.png'} width={16} height={16} alt='' />
-                    <span className='text-sm font-semibold'>English</span>
+                  <div className="flex items-center gap-2">
+                    <Image src="/images/flag-uz.png" width={16} height={16} alt="English Flag" />
+                    <span className="text-sm font-semibold">English</span>
                   </div>
                 </SelectItem>
                 <SelectItem value="ru">
-                  <div className='flex items-center gap-2'>
-                    <Image src={'/images/flag-uz.png'} width={16} height={16} alt='' />
-                    <span className='text-sm font-semibold'>Russian</span>
+                  <div className="flex items-center gap-2">
+                    <Image src="/images/flag-uz.png" width={16} height={16} alt="Russian Flag" />
+                    <span className="text-sm font-semibold">Russian</span>
                   </div>
                 </SelectItem>
               </SelectContent>
             </Select>
-            <Button className='text-white text-[15px] font-bold rounded-lg py-4'>Sinovdan o&#39;ting</Button>
+            <Button className="text-white text-sm md:text-[15px] font-bold rounded-lg py-2 md:py-4">Sinovdan o’ting</Button>
           </div>
         </div>
+
+        {/* Mobile Menu (Animated with Framer Motion) */}
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="md:hidden bg-white border-b"
+          >
+            <nav className="flex flex-col gap-4 py-4 px-5">
+              {NAV_ITEMS.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-[#252A3B] text-lg font-semibold hover:text-blue-600"
+                  onClick={() => setIsOpen(false)} // Close menu on click
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </motion.div>
+        )}
       </header>
 
       {/* Hero Section */}
       <section className="max-w-[1160px] px-5 mx-auto relative">
         <div className="flex flex-col items-center justify-center h-[600px]">
-          <h1 className="text-5xl leading-normal font-bold mb-8 text-center">
+          <h1 className="text-2xl md:text-5xl leading-normal font-bold mb-8 text-center">
             Ваша работа мечты уже ждет вас, <br /> начните сегодня!
           </h1>
           <div className="flex justify-center items-center mb-8 max-w-md mx-auto">
@@ -373,23 +417,23 @@ const LandingPage = () => {
           </button>
 
         </div>
-        <Image src="/images/html5.png" alt="Flutter" width={50} height={65} className='absolute right-1/2 top-[40px]' />
-        <Image src="/images/figma.png" alt="Flutter" width={50} height={65} className='absolute left-[0px] top-[140px]' />
-        <Image src="/images/python.png" alt="Flutter" width={65} height={65} className='absolute left-[200px] bottom-[100px]' />
-        <Image src="/images/flutter.png" alt="Flutter" width={50} height={65} className='absolute right-[100px] top-[260px]' />
-        <Image src="/images/dart.png" alt="Flutter" width={65} height={65} className='absolute right-[300px] bottom-[160px]' />
+        <Image src="/images/html5.png" alt="Flutter" width={50} height={65} className='hidden lg:block absolute right-1/2 top-[40px]' />
+        <Image src="/images/figma.png" alt="Flutter" width={50} height={65} className='hidden lg:block absolute left-[0px] top-[140px]' />
+        <Image src="/images/python.png" alt="Flutter" width={65} height={65} className='hidden lg:block absolute left-[200px] bottom-[100px]' />
+        <Image src="/images/flutter.png" alt="Flutter" width={50} height={65} className='hidden lg:block absolute right-[100px] top-[260px]' />
+        <Image src="/images/dart.png" alt="Flutter" width={65} height={65} className='hidden lg:block absolute right-[300px] bottom-[160px]' />
       </section>
 
 
 
       {/* Features Section */}
       <section className="max-w-[1160px] px-5 mx-auto">
-        <div className="grid grid-cols-2 gap-4 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
           <div className="flex flex-col gap-8">
-            <h2 className="text-4xl leading-normal font-bold mb-4 text-[#252A3B]">
+            <h2 className="text-2xl md:text-4xl leading-normal font-bold mb-4 text-[#252A3B]">
               Сайт рыбатекст поможет дизайнеру, верстальщику
             </h2>
-            <p className="text-[#7F8A9E] text-xl">
+            <p className="text-[#7F8A9E]  md:text-xl">
               Siz IT o&#39;quv kursini tugatdingiz yoki Internet tarmog&#39;i orqali mustaqil o&#39;rgandingiz, ammo ishga joylashishda qiyinchiliklarga uchrayapsizmi? Biz sizga yordam beramiz. Ushbu loyiha qobiliyatli yoshlarni topib, yetuk kadrlar bo&#39;lib yetishishiga yordam berish uchun tashkil qilindi.
             </p>
           </div>
@@ -398,17 +442,17 @@ const LandingPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 items-center mt-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center mt-24">
           <Image src="/images/intern-girl-laptop.png" width={'500'} height={500} alt="Workspace" className="rounded-lg" style={{ height: '100%', width: 'auto' }} />
           <div className="flex flex-col gap-8">
-            <h2 className="text-4xl leading-normal font-bold mb-4 text-[#252A3B]">
+            <h2 className="text-2xl md:text-4xl leading-normal font-bold mb-4 text-[#252A3B]">
               Aksariyat kompaniyalar ishga joylashishda sizdan ish staji va portfolio so&#39;raydi
             </h2>
-            <p className="text-[#7F8A9E] text-xl">
+            <p className="text-[#7F8A9E] md:text-xl">
               Tabiyki endigini bu sohaga kirib kelayotgan internlarda bular mavjud emas. Ma&#39;lum bir ish stajiga ega bo&#39;lish va turli xil qiziqarli lohiyalardan iborat portfolioni hosil qilish uchun ushbu loyihada amaliyot o&#39;tashni taklif qilamiz.
 
             </p>
-            <p className="text-[#7F8A9E] text-xl">
+            <p className="text-[#7F8A9E] md:text-xl">
               Amaliyotchilar soni chegaralangan va konkurs asosida saralab olinadi. Eng yuqori ball to&#39;plagan 10 kishi bepul amaliyot o&#39;tash imkoniyatiga ega bo&#39;ladi.
             </p>
             <div className="flex items-center mt-4">
@@ -419,18 +463,18 @@ const LandingPage = () => {
       </section>
 
       {/* Application Form */}
-      <section className="relative w-full overflow-hidden mt-20 h-[600px]">
-        <div className="w-[calc(100vw+100px)] absolute top-0 -left-[50px]">
+      <section className="relative w-full overflow-hidden mt-20 min-h-[400px] md:h-[600px]">
+        <div className="hidden md:block w-[calc(100vw+100px)] absolute top-0 -left-[50px]">
           <svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" className='w-full'>
             <ellipse cx="100" cy="30" rx="100" ry="30" fill="#F3F7F9" />
           </svg>
         </div>
-        <div className="bg-[#F3F7F9] w-full h-[400px] absolute top-[200px] left-0">
+        <div className="bg-[#F3F7F9] w-full h-[400px] absolute md:top-[200px] left-0">
           <div className="flex flex-col gap-4 items-center">
-            <h2 className="text-4xl leading-normal font-bold text-center text-[#252A3B]">
+            <h2 className="text-2xl md:text-4xl pt-12 leading-normal font-bold text-center text-[#252A3B]">
               Форма заявки
             </h2>
-            <form className="space-y-4 min-w-[500px]">
+            <form className="space-y-4 min-w-[300px] md:min-w-[500px]">
               <div className="space-y-2">
                 <select className="w-full p-3 border rounded-lg" value={user?.id} title="Select User" onChange={e => setUser(users?.find(u => u.id === parseInt(e.target.value)))}>
                   <option value="">User</option>
@@ -475,7 +519,7 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#252A3B] text-xl text-white py-12 text-center">
+      <footer className="bg-[#252A3B] md:text-xl text-white py-8 md:py-12 text-center">
         <p>Copyright ©2025. All rights reserveu</p>
       </footer>
     </div>
