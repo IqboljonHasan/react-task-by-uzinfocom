@@ -1,35 +1,17 @@
 "use client";
+
 import { DataTable as UserTable } from '@/components/data-table';
 import { apiUrl } from '@/lib/constants';
-import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
-import { Menu, X } from "lucide-react";
-import { motion } from "framer-motion";
-import Link from 'next/link';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Category, Counts, CountsData, User, UserName } from '@/lib/interfaces';
 import { TableSkeleton } from '@/components/table-skeleton';
-
-const NAV_ITEMS = [
-  { href: "/", label: "Reja" },
-  { href: "/requirements", label: "Qabul qilish talablari" },
-  { href: "/guidelines", label: "Ko'rsatmalar" },
-  { href: "/selection", label: "Saralash" },
-];
+import Hero from '@/views/hero';
+import Features from '@/views/features';
+import Footer from '@/views/footer';
 
 
 const LandingPage = () => {
@@ -46,11 +28,9 @@ const LandingPage = () => {
   const [data, setData] = useState<CountsData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-
-    async function fetchColumns() {
+    async function initData() {
       try {
         const categoriesResponse = await fetch(apiUrl + "/categories");
         const categoriesData: Category[] = await categoriesResponse.json();
@@ -210,9 +190,8 @@ const LandingPage = () => {
       }
     }
 
-    fetchColumns();
+    initData();
   }, []);
-
 
 
   const handleSubmit = (e: { preventDefault: () => void; }) => {
@@ -261,17 +240,12 @@ const LandingPage = () => {
   };
 
   useEffect(() => {
-    console.log({ user, category, counts });
-
     if (user && category && counts) {
       const item = counts.find((c: Counts) => c.user_id == user?.id.toString() && c.category_id == category?.id.toString());
-      console.log({ item });
       if (item) {
         setCount(item?.count);
       }
       else {
-        console.log("resetting count");
-
         setCount(0);
       }
     }
@@ -279,157 +253,8 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="border-b bg-white">
-        <div className="max-w-[1160px] px-5 mx-auto flex justify-between items-center py-5">
-          {/* Mobile Menu Button */}
-          <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">
-            {isOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
-
-          {/* Navigation Links (Desktop) */}
-          <nav className="hidden md:flex gap-8">
-            {NAV_ITEMS.map((item) => (
-              <Link key={item.href} href={item.href} className="text-[#252A3B] text-lg font-semibold hover:text-blue-600">
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Language Selector & Button */}
-          <div className="flex gap-4 items-center">
-            <Select defaultValue="uz">
-              <SelectTrigger className="border-none shadow-none">
-                <SelectValue placeholder="Language" />
-              </SelectTrigger>
-              <SelectContent className="border-none">
-                <SelectItem value="uz">
-                  <div className="flex items-center gap-2">
-                    <Image src="/images/flag-uz.png" width={16} height={16} alt="Uzbekistan Flag" />
-                    <span className="text-sm font-semibold"> O&apos;zbek Tili</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="en">
-                  <div className="flex items-center gap-2">
-                    <Image src="/images/flag-uz.png" width={16} height={16} alt="English Flag" />
-                    <span className="text-sm font-semibold">English</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="ru">
-                  <div className="flex items-center gap-2">
-                    <Image src="/images/flag-uz.png" width={16} height={16} alt="Russian Flag" />
-                    <span className="text-sm font-semibold">Russian</span>
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            <Button className="text-white text-sm md:text-[15px] font-bold rounded-lg py-2 md:py-4">Sinovdan o’ting</Button>
-          </div>
-        </div>
-
-        {/* Mobile Menu (Animated with Framer Motion) */}
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="md:hidden bg-white border-b"
-          >
-            <nav className="flex flex-col gap-4 py-4 px-5">
-              {NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="text-[#252A3B] text-lg font-semibold hover:text-blue-600"
-                  onClick={() => setIsOpen(false)} // Close menu on click
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-          </motion.div>
-        )}
-      </header>
-
-      {/* Hero Section */}
-      <section className="max-w-[1160px] px-5 mx-auto relative">
-        <div className="flex flex-col items-center justify-center py-12 md:py-0 md:h-[600px]">
-          <h1 className="text-2xl md:text-5xl md:leading-normal font-bold mb-8 text-center">
-            Ваша работа мечты уже ждет вас, <br className="md:block hidden" /> начните сегодня!
-          </h1>
-          <div className="flex flex-col md:flex-row justify-center items-center mb-8 max-w-md mx-auto">
-            <div className="flex -space-x-2 mb-4">
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-              <Avatar className="border border-white ">
-                <AvatarImage src="https://githusb.com/shadcn.png" alt="@shadcn" />
-                <AvatarFallback className=' bg-[#5254F1] text-white'>+120</AvatarFallback>
-              </Avatar>
-            </div>
-            <span className="ml-4 mb-4 text-gray-600 leading-6 text-center md:text-left ">человек уже стали участниками групп по своим направлениям</span>
-          </div>
-          <button className="bg-[#5254F1] text-white px-8 py-3  text-xl font-semibold rounded-lg">
-            Оставить заявку
-          </button>
-
-        </div>
-        <Image src="/images/html5.png" alt="Flutter" width={50} height={65} className='hidden lg:block absolute right-1/2 top-[40px]' />
-        <Image src="/images/figma.png" alt="Flutter" width={50} height={65} className='hidden lg:block absolute left-[0px] top-[140px]' />
-        <Image src="/images/python.png" alt="Flutter" width={65} height={65} className='hidden lg:block absolute left-[200px] bottom-[100px]' />
-        <Image src="/images/flutter.png" alt="Flutter" width={50} height={65} className='hidden lg:block absolute right-[100px] top-[260px]' />
-        <Image src="/images/dart.png" alt="Flutter" width={65} height={65} className='hidden lg:block absolute right-[300px] bottom-[160px]' />
-      </section>
-
-
-
-      {/* Features Section */}
-      <section className="max-w-[1160px] px-5 mx-auto">
-        <div className="flex flex-col-reverse md:flex-row gap-6 items-center">
-          <div className="md:w-1/2 flex flex-col gap-8">
-            <h2 className="text-2xl md:text-4xl text-center md:text-left md:leading-normal font-bold text-[#252A3B]">
-              Сайт рыбатекст поможет дизайнеру, верстальщику
-            </h2>
-            <p className="text-[#7F8A9E]  md:text-xl text-justify md:text-left">
-              Siz IT o&#39;quv kursini tugatdingiz yoki Internet tarmog&#39;i orqali mustaqil o&#39;rgandingiz, ammo ishga joylashishda qiyinchiliklarga uchrayapsizmi? Biz sizga yordam beramiz. Ushbu loyiha qobiliyatli yoshlarni topib, yetuk kadrlar bo&#39;lib yetishishiga yordam berish uchun tashkil qilindi.
-            </p>
-          </div>
-          <div className="flex justify-center md:justify-end md:min-h-[500px]">
-            <Image src="/images/consulting.png" width={'500'} height={500} alt="Workspace" className="rounded-lg " />
-          </div>
-        </div>
-
-        <div className="flex flex-col md:flex-row gap-4 items-center mt-16 md:mt-24">
-          <div className="md:w-1/2 flex justify-center md:justify-start md:min-h-[500px]">
-            <Image src="/images/intern-girl-laptop.png" width={'500'} height={500} alt="Workspace" className="rounded-lg" />
-          </div>
-          {/* <Image src="/images/intern-girl-laptop.png" width={'500'} height={500} alt="Workspace" className="rounded-lg" style={{ height: '100%', width: 'auto' }} /> */}
-          <div className="md:w-1/2 flex flex-col gap-8">
-            <h2 className="text-2xl md:text-4xl text-center md:text-left md:leading-normal font-bold text-[#252A3B]">
-              Aksariyat kompaniyalar ishga joylashishda sizdan ish staji va portfolio so&#39;raydi
-            </h2>
-            <p className="text-[#7F8A9E]  md:text-xl text-justify md:text-left">
-              Tabiyki endigini bu sohaga kirib kelayotgan internlarda bular mavjud emas. Ma&#39;lum bir ish stajiga ega bo&#39;lish va turli xil qiziqarli lohiyalardan iborat portfolioni hosil qilish uchun ushbu loyihada amaliyot o&#39;tashni taklif qilamiz.
-
-            </p>
-            <p className="text-[#7F8A9E]  md:text-xl text-justify md:text-left">
-              Amaliyotchilar soni chegaralangan va konkurs asosida saralab olinadi. Eng yuqori ball to&#39;plagan 10 kishi bepul amaliyot o&#39;tash imkoniyatiga ega bo&#39;ladi.
-            </p>
-            <div className="flex items-center mt-4">
-            </div>
-          </div>
-
-        </div>
-      </section>
+      <Hero />
+      <Features />
 
       {/* Application Form */}
       <section className="relative w-full overflow-hidden mt-20 min-h-[400px] md:h-[600px]">
@@ -474,7 +299,7 @@ const LandingPage = () => {
 
       </section>
 
-      {/* Participants Rating Table */}
+      {/* Participants Table */}
       <section className="xl:max-w-screen-2xl mx-auto px-4 py-20 relative  bg-white">
         <h2 className="text-4xl leading-normal font-bold mb-8">Рейтинг участников</h2>
         {loading ? (
@@ -484,10 +309,7 @@ const LandingPage = () => {
         )}
       </section>
 
-      {/* Footer */}
-      <footer className="bg-[#252A3B] md:text-xl text-white py-8 md:py-12 text-center">
-        <p>Copyright ©2025. All rights reserved</p>
-      </footer>
+      <Footer />
     </div>
   );
 };

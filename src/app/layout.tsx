@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { gilroy } from "@/lib/font";
 import "./globals.css";
+import Header from "@/views/header";
 
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body
         className={gilroy.className}
       >
+        <Header />
         {children}
       </body>
     </html>
