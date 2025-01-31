@@ -475,7 +475,7 @@ const LandingPage = () => {
       </section>
 
       {/* Participants Rating Table */}
-      <section className="container mx-auto px-4 py-20 relative  bg-white">
+      <section className="xl:max-w-screen-2xl mx-auto px-4 py-20 relative  bg-white">
         <h2 className="text-4xl leading-normal font-bold mb-8">Рейтинг участников</h2>
         {loading ? (
           <TableSkeleton />
