@@ -7,6 +7,18 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
 interface Category {
   id: number;
   name: string;
@@ -290,113 +302,171 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b flex items-center justify-center">
-        <div className="container flex justify-between items-center py-4">
+      <header className="border-b">
+        <div className="max-w-[1160px] px-5 mx-auto flex justify-between items-center py-5">
           <nav className="flex gap-8">
             <a href="#" className="text-[#252A3B] text-lg font-semibold">Reja</a>
             <a href="#" className="text-[#252A3B] text-lg font-semibold">Qabul qilish talablari</a>
             <a href="#" className="text-[#252A3B] text-lg font-semibold">Ko&#39;rsatmalar</a>
             <a href="#" className="text-[#252A3B] text-lg font-semibold">Saralash</a>
           </nav>
-          <div className="flex space-x-4">
-            <select className="bg-transparent" title="Select Language">
-              <option>O&#39;zbek Tili</option>
-              <option>English</option>
-            </select>
-            <button className="bg-[#252A3B] text-white text-[15px] font-bold px-4 py-2 rounded">
-              Sinovdan o&#39;ting
-            </button>
+          <div className="flex gap-4 items-center">
+            <Select defaultValue="uz">
+              <SelectTrigger className="border-none shadow-none">
+                <SelectValue placeholder="Theme" />
+              </SelectTrigger>
+              <SelectContent className='border-none'>
+                <SelectItem value="uz" >
+                  <div className='flex items-center gap-2'>
+                    <Image src={'/images/flag-uz.png'} width={16} height={16} alt="Uzbekistan Flag" />
+                    <span className='text-sm font-semibold'> O&#39;zbek Tili</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="en">
+                  <div className='flex items-center gap-2'>
+                    <Image src={'/images/flag-uz.png'} width={16} height={16} alt='' />
+                    <span className='text-sm font-semibold'>English</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="ru">
+                  <div className='flex items-center gap-2'>
+                    <Image src={'/images/flag-uz.png'} width={16} height={16} alt='' />
+                    <span className='text-sm font-semibold'>Russian</span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <Button className='text-white text-[15px] font-bold rounded-lg py-4'>Sinovdan o&#39;ting</Button>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="container mx-auto text-center py-20 relative">
-        <Image src="/images/flutter.png" alt="Flutter" width={50} height={58} className='absolute left-[100px] top-[244px]' />
-        <Image src="/images/dart.png" alt="Flutter" width={50} height={58} className='absolute left-[300px] top-[844px]' />
-        <Image src="/images/figma.png" alt="Flutter" width={50} height={58} className='absolute right-[100px] top-[244px]' />
-        <Image src="/images/html5.png" alt="Flutter" width={50} height={58} className='absolute right-[300px] top-[844px]' />
-        <Image src="/images/python.png" alt="Flutter" width={50} height={58} className='absolute left-[800px] top-[100px]' />
-
-        <h1 className="text-4xl font-bold mb-8">
-          Ваша работа мечты уже ждет вас, начните сегодня!
-        </h1>
-        <div className="flex justify-center items-center mb-8">
-          <div className="flex -space-x-2">
+      <section className="max-w-[1160px] px-5 mx-auto relative">
+        <div className="flex flex-col items-center justify-center h-[600px]">
+          <h1 className="text-5xl leading-normal font-bold mb-8 text-center">
+            Ваша работа мечты уже ждет вас, <br /> начните сегодня!
+          </h1>
+          <div className="flex justify-center items-center mb-8 max-w-md mx-auto">
+            <div className="flex -space-x-2">
+              <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              <Avatar className="border border-white ">
+                <AvatarImage src="https://githusb.com/shadcn.png" alt="@shadcn" />
+                <AvatarFallback className=' bg-[#5254F1] text-white'>+120</AvatarFallback>
+              </Avatar>
+            </div>
+            <span className="ml-4 text-gray-600 leading-6">человек уже стали участниками групп по своим направлениям</span>
           </div>
-          <span className="ml-4 text-gray-600">человек уже стали участниками групп по своим направлениям</span>
+          <button className="bg-[#5254F1] text-white px-8 py-3  text-xl font-semibold rounded-lg">
+            Оставить заявку
+          </button>
+
         </div>
-        <button className="bg-blue-600 text-white px-8 py-3 rounded-lg">
-          Оставить заявку
-        </button>
+        <Image src="/images/html5.png" alt="Flutter" width={50} height={65} className='absolute right-1/2 top-[40px]' />
+        <Image src="/images/figma.png" alt="Flutter" width={50} height={65} className='absolute left-[0px] top-[140px]' />
+        <Image src="/images/python.png" alt="Flutter" width={65} height={65} className='absolute left-[200px] bottom-[100px]' />
+        <Image src="/images/flutter.png" alt="Flutter" width={50} height={65} className='absolute right-[100px] top-[260px]' />
+        <Image src="/images/dart.png" alt="Flutter" width={65} height={65} className='absolute right-[300px] bottom-[160px]' />
       </section>
 
 
 
       {/* Features Section */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-16 max-w-6xl mx-auto px-4 py-20">
-        <div className="flex flex-col">
-          <h2 className="text-2xl font-bold mb-4">
-            Сайт рыбатекст поможет дизайнеру, верстальщику
-          </h2>
-          <p className="text-gray-600 mb-4">
-            Siz IT o&#39;quv kursini tugatdingiz yoki Internet tarmog&#39;i orqali mustaqil o&#39;rgandingiz, ammo ishga joylashishda qiyinchiliklarga uchrayapsizmi? Biz sizga yordam beramiz. Ushbu loyiha qobiliyatli yoshlarni topib, yetuk kadrlar bo&#39;lib yetishishiga yordam berish uchun tashkil qilindi.
-          </p>
-          <div className="grid grid-cols-2 gap-4">
-            <Image src="/images/consulting.png" width={300} height={500} alt="Workspace" className="rounded-lg" />
+      <section className="max-w-[1160px] px-5 mx-auto">
+        <div className="grid grid-cols-2 gap-4 items-center">
+          <div className="flex flex-col gap-8">
+            <h2 className="text-4xl leading-normal font-bold mb-4 text-[#252A3B]">
+              Сайт рыбатекст поможет дизайнеру, верстальщику
+            </h2>
+            <p className="text-[#7F8A9E] text-xl">
+              Siz IT o&#39;quv kursini tugatdingiz yoki Internet tarmog&#39;i orqali mustaqil o&#39;rgandingiz, ammo ishga joylashishda qiyinchiliklarga uchrayapsizmi? Biz sizga yordam beramiz. Ushbu loyiha qobiliyatli yoshlarni topib, yetuk kadrlar bo&#39;lib yetishishiga yordam berish uchun tashkil qilindi.
+            </p>
+          </div>
+          <div className="flex justify-end min-h-[500px">
+            <Image src="/images/consulting.png" width={'500'} height={500} alt="Workspace" className="rounded-lg" style={{ height: '100%', width: 'auto' }} />
           </div>
         </div>
 
-        <div className="flex flex-col">
-          <h2 className="text-2xl font-bold mb-4">
-            Aksariyat kompaniyalar ishga joylashishda sizdan ish staji va portfolio so&#39;raydi
-          </h2>
-          <p className="text-gray-600 mb-4">
-            Tabiyki endigini bu sohaga kirib kelayotgan internlarda bular mavjud emas. Ma&#39;lum bir ish stajiga ega bo&#39;lish va turli xil qiziqarli lohiyalardan iborat portfolioni hosil qilish uchun ushbu loyihada amaliyot o&#39;tashni taklif qilamiz.
+        <div className="grid grid-cols-2 gap-4 items-center mt-24">
+          <Image src="/images/intern-girl-laptop.png" width={'500'} height={500} alt="Workspace" className="rounded-lg" style={{ height: '100%', width: 'auto' }} />
+          <div className="flex flex-col gap-8">
+            <h2 className="text-4xl leading-normal font-bold mb-4 text-[#252A3B]">
+              Aksariyat kompaniyalar ishga joylashishda sizdan ish staji va portfolio so&#39;raydi
+            </h2>
+            <p className="text-[#7F8A9E] text-xl">
+              Tabiyki endigini bu sohaga kirib kelayotgan internlarda bular mavjud emas. Ma&#39;lum bir ish stajiga ega bo&#39;lish va turli xil qiziqarli lohiyalardan iborat portfolioni hosil qilish uchun ushbu loyihada amaliyot o&#39;tashni taklif qilamiz.
 
-          </p>
-          <p className="text-gray-600 mb-4">
-            Amaliyotchilar soni chegaralangan va konkurs asosida saralab olinadi. Eng yuqori ball to&#39;plagan 10 kishi bepul amaliyot o&#39;tash imkoniyatiga ega bo&#39;ladi.
-          </p>
-          <div className="flex items-center mt-4">
-            <Image src="/images/intern-girl-laptop.png" width={300} height={500} alt="Workspace" className="rounded-lg" />
+            </p>
+            <p className="text-[#7F8A9E] text-xl">
+              Amaliyotchilar soni chegaralangan va konkurs asosida saralab olinadi. Eng yuqori ball to&#39;plagan 10 kishi bepul amaliyot o&#39;tash imkoniyatiga ega bo&#39;ladi.
+            </p>
+            <div className="flex items-center mt-4">
+            </div>
           </div>
+
         </div>
       </section>
 
       {/* Application Form */}
-      <section className="max-w-md mx-auto py-20">
-        <h2 className="text-2xl font-bold mb-8 text-center">Форма заявки</h2>
-        <form className="space-y-4">
-          <div className="space-y-2">
-            <select className="w-full p-3 border rounded-lg" value={user?.id} title="Select User" onChange={e => setUser(users?.find(u => u.id === parseInt(e.target.value)))}>
-              <option value="">User</option>
-              {users && users.map(u => (
-                <option value={u.id} key={u.id}>{u.first_name} {u['last name']}</option>
-              ))}
-            </select>
+      <section className="relative w-full overflow-hidden mt-20 h-[600px]">
+        <div className="w-[calc(100vw+100px)] absolute top-0 -left-[50px]">
+          <svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" className='w-full'>
+            <ellipse cx="100" cy="30" rx="100" ry="30" fill="#F3F7F9" />
+          </svg>
+        </div>
+        <div className="bg-[#F3F7F9] w-full h-[400px] absolute top-[200px] left-0">
+          <div className="flex flex-col gap-4 items-center">
+            <h2 className="text-4xl leading-normal font-bold text-center text-[#252A3B]">
+              Форма заявки
+            </h2>
+            <form className="space-y-4 min-w-[500px]">
+              <div className="space-y-2">
+                <select className="w-full p-3 border rounded-lg" value={user?.id} title="Select User" onChange={e => setUser(users?.find(u => u.id === parseInt(e.target.value)))}>
+                  <option value="">User</option>
+                  {users && users.map(u => (
+                    <option value={u.id} key={u.id}>{u.first_name} {u['last name']}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <select className="w-full p-3 border rounded-lg" title="Select Category" onChange={e => setCategory(categories?.find(c => c.id === parseInt(e.target.value)))}>
+                  <option value="">Category</option>
+                  {categories && categories.map(category => (
+                    <option value={category.id} key={category.id}>{category.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <input type="number" placeholder="Count" value={count} onChange={(e) => setCount(Number(e.target.value))} className="w-full p-3 border rounded-lg" />
+              </div>
+              {formError && <p className="text-red-500">{formError}</p>}
+              <button className="w-full bg-blue-600 text-white py-3 rounded-lg" onClick={handleSubmit}>
+                SET
+              </button>
+            </form>
+
           </div>
-          <div className="space-y-2">
-            <select className="w-full p-3 border rounded-lg" title="Select Category" onChange={e => setCategory(categories?.find(c => c.id === parseInt(e.target.value)))}>
-              <option value="">Category</option>
-              {categories && categories.map(category => (
-                <option value={category.id} key={category.id}>{category.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-2">
-            <input type="number" placeholder="Count" value={count} onChange={(e) => setCount(Number(e.target.value))} className="w-full p-3 border rounded-lg" />
-          </div>
-          {formError && <p className="text-red-500">{formError}</p>}
-          <button className="w-full bg-blue-600 text-white py-3 rounded-lg" onClick={handleSubmit}>
-            SET
-          </button>
-        </form>
+        </div>
+        <div className="max-w-md mx-auto py-20 z-10 relative">
+
+        </div>
+
       </section>
 
       {/* Participants Rating Table */}
-      <section className=" mx-auto px-4 py-20">
-        <h2 className="text-2xl font-bold mb-8">Рейтинг участников</h2>
+      <section className="container mx-auto px-4 py-20 relative  bg-white">
+        <h2 className="text-4xl leading-normal font-bold mb-8">Рейтинг участников</h2>
         {loading ? (
           <Skeleton className="w-full h-96" />
         ) : (
@@ -405,7 +475,7 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-4 text-center">
+      <footer className="bg-[#252A3B] text-xl text-white py-12 text-center">
         <p>Copyright ©2025. All rights reserveu</p>
       </footer>
     </div>
