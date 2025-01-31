@@ -4,7 +4,6 @@ import { apiUrl } from '@/lib/constants';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { ColumnDef } from "@tanstack/react-table";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +22,7 @@ import { Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from 'next/link';
 import { Category, Counts, CountsData, User, UserName } from '@/lib/interfaces';
+import { TableSkeleton } from '@/components/table-skeleton';
 
 const NAV_ITEMS = [
   { href: "/", label: "Reja" },
@@ -353,12 +353,12 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <section className="max-w-[1160px] px-5 mx-auto relative">
-        <div className="flex flex-col items-center justify-center h-[600px]">
-          <h1 className="text-2xl md:text-5xl leading-normal font-bold mb-8 text-center">
-            Ваша работа мечты уже ждет вас, <br /> начните сегодня!
+        <div className="flex flex-col items-center justify-center py-12 md:py-0 md:h-[600px]">
+          <h1 className="text-2xl md:text-5xl md:leading-normal font-bold mb-8 text-center">
+            Ваша работа мечты уже ждет вас, <br className="md:block hidden" /> начните сегодня!
           </h1>
-          <div className="flex justify-center items-center mb-8 max-w-md mx-auto">
-            <div className="flex -space-x-2">
+          <div className="flex flex-col md:flex-row justify-center items-center mb-8 max-w-md mx-auto">
+            <div className="flex -space-x-2 mb-4">
               <Avatar>
                 <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
                 <AvatarFallback>CN</AvatarFallback>
@@ -376,7 +376,7 @@ const LandingPage = () => {
                 <AvatarFallback className=' bg-[#5254F1] text-white'>+120</AvatarFallback>
               </Avatar>
             </div>
-            <span className="ml-4 text-gray-600 leading-6">человек уже стали участниками групп по своим направлениям</span>
+            <span className="ml-4 mb-4 text-gray-600 leading-6 text-center md:text-left ">человек уже стали участниками групп по своим направлениям</span>
           </div>
           <button className="bg-[#5254F1] text-white px-8 py-3  text-xl font-semibold rounded-lg">
             Оставить заявку
@@ -394,31 +394,34 @@ const LandingPage = () => {
 
       {/* Features Section */}
       <section className="max-w-[1160px] px-5 mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-          <div className="flex flex-col gap-8">
-            <h2 className="text-2xl md:text-4xl leading-normal font-bold mb-4 text-[#252A3B]">
+        <div className="flex flex-col-reverse md:flex-row gap-6 items-center">
+          <div className="md:w-1/2 flex flex-col gap-8">
+            <h2 className="text-2xl md:text-4xl text-center md:text-left md:leading-normal font-bold text-[#252A3B]">
               Сайт рыбатекст поможет дизайнеру, верстальщику
             </h2>
-            <p className="text-[#7F8A9E]  md:text-xl">
+            <p className="text-[#7F8A9E]  md:text-xl text-justify md:text-left">
               Siz IT o&#39;quv kursini tugatdingiz yoki Internet tarmog&#39;i orqali mustaqil o&#39;rgandingiz, ammo ishga joylashishda qiyinchiliklarga uchrayapsizmi? Biz sizga yordam beramiz. Ushbu loyiha qobiliyatli yoshlarni topib, yetuk kadrlar bo&#39;lib yetishishiga yordam berish uchun tashkil qilindi.
             </p>
           </div>
-          <div className="flex justify-end min-h-[500px">
-            <Image src="/images/consulting.png" width={'500'} height={500} alt="Workspace" className="rounded-lg" style={{ height: '100%', width: 'auto' }} />
+          <div className="flex justify-center md:justify-end md:min-h-[500px]">
+            <Image src="/images/consulting.png" width={'500'} height={500} alt="Workspace" className="rounded-lg " />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center mt-24">
-          <Image src="/images/intern-girl-laptop.png" width={'500'} height={500} alt="Workspace" className="rounded-lg" style={{ height: '100%', width: 'auto' }} />
-          <div className="flex flex-col gap-8">
-            <h2 className="text-2xl md:text-4xl leading-normal font-bold mb-4 text-[#252A3B]">
+        <div className="flex flex-col md:flex-row gap-4 items-center mt-16 md:mt-24">
+          <div className="md:w-1/2 flex justify-center md:justify-start md:min-h-[500px]">
+            <Image src="/images/intern-girl-laptop.png" width={'500'} height={500} alt="Workspace" className="rounded-lg" />
+          </div>
+          {/* <Image src="/images/intern-girl-laptop.png" width={'500'} height={500} alt="Workspace" className="rounded-lg" style={{ height: '100%', width: 'auto' }} /> */}
+          <div className="md:w-1/2 flex flex-col gap-8">
+            <h2 className="text-2xl md:text-4xl text-center md:text-left md:leading-normal font-bold text-[#252A3B]">
               Aksariyat kompaniyalar ishga joylashishda sizdan ish staji va portfolio so&#39;raydi
             </h2>
-            <p className="text-[#7F8A9E] md:text-xl">
+            <p className="text-[#7F8A9E]  md:text-xl text-justify md:text-left">
               Tabiyki endigini bu sohaga kirib kelayotgan internlarda bular mavjud emas. Ma&#39;lum bir ish stajiga ega bo&#39;lish va turli xil qiziqarli lohiyalardan iborat portfolioni hosil qilish uchun ushbu loyihada amaliyot o&#39;tashni taklif qilamiz.
 
             </p>
-            <p className="text-[#7F8A9E] md:text-xl">
+            <p className="text-[#7F8A9E]  md:text-xl text-justify md:text-left">
               Amaliyotchilar soni chegaralangan va konkurs asosida saralab olinadi. Eng yuqori ball to&#39;plagan 10 kishi bepul amaliyot o&#39;tash imkoniyatiga ega bo&#39;ladi.
             </p>
             <div className="flex items-center mt-4">
@@ -468,9 +471,6 @@ const LandingPage = () => {
 
           </div>
         </div>
-        <div className="max-w-md mx-auto py-20 z-10 relative">
-
-        </div>
 
       </section>
 
@@ -478,7 +478,7 @@ const LandingPage = () => {
       <section className="container mx-auto px-4 py-20 relative  bg-white">
         <h2 className="text-4xl leading-normal font-bold mb-8">Рейтинг участников</h2>
         {loading ? (
-          <Skeleton className="w-full h-96" />
+          <TableSkeleton />
         ) : (
           <UserTable columns={columns} data={data} />
         )}
@@ -486,7 +486,7 @@ const LandingPage = () => {
 
       {/* Footer */}
       <footer className="bg-[#252A3B] md:text-xl text-white py-8 md:py-12 text-center">
-        <p>Copyright ©2025. All rights reserveu</p>
+        <p>Copyright ©2025. All rights reserved</p>
       </footer>
     </div>
   );
