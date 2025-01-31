@@ -22,3 +22,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## Deploy on Vercel
 
 public url : [https://react-task-by-uzinfocom.vercel.app/](https://react-task-by-uzinfocom.vercel.app/)
+
+<p align="center">
+  <img src="https://react-task-by-uzinfocom.vercel.app/images/vercel-deploy.png" title="deployments  on vercel">
+</p>
