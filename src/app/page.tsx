@@ -22,6 +22,7 @@ import {
 import { Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from 'next/link';
+import { Category, Counts, CountsData, User, UserName } from '@/lib/interfaces';
 
 const NAV_ITEMS = [
   { href: "/", label: "Reja" },
@@ -29,36 +30,7 @@ const NAV_ITEMS = [
   { href: "/guidelines", label: "Ko'rsatmalar" },
   { href: "/selection", label: "Saralash" },
 ];
-interface Category {
-  id: number;
-  name: string;
-}
 
-interface User {
-  id: number;
-  first_name: string;
-  "last name": string;
-  avatar: string;
-}
-interface Counts {
-  category_id: string;
-  user_id: string;
-  count: number;
-}
-
-type UserName = {
-  id: string
-  avatar: string
-  firstName: string
-  lastName: string
-}
-
-type CountsData = {
-  id: string
-  name: UserName
-  total: number
-  [key: string]: unknown
-}
 
 const LandingPage = () => {
   const [categories, setCategories] = useState<Category[]>();
@@ -196,46 +168,38 @@ const LandingPage = () => {
         setColumns(columns);
 
 
-        const data: CountsData[] = usersData.map((user) => {
-          const dd: CountsData = {
+        const userDataTable: CountsData[] = usersData.map((user) => ({
+          id: user.id.toString(),
+          name: {
             id: user.id.toString(),
-            name: {
-              id: user.id.toString(),
-              avatar: user.avatar,
-              firstName: user.first_name,
-              lastName: user['last name']
-            },
-            total: 0,
-          }
-          return dd;
+            avatar: user.avatar,
+            firstName: user.first_name,
+            lastName: user['last name']
+          },
+          total: 0,
+        }));
+        console.log(userDataTable);
+        userDataTable.forEach((user) => {
+          categoriesData.forEach((category) => {
+            user[category.id.toString()] = 0;
+          });
         });
 
-        // data.push({
-        //   id: "subtotal",
-        //   name: {
-        //     id: "subtotal",
-        //     avatar: "",
-        //     firstName: "subtotal",
-        //     lastName: "subtotal"
-        //   },
-        //   total: 0,
-        // });
-
         countsData.forEach((count) => {
-          const item = data.find((d) => d.id == count.user_id);
+          const item = userDataTable.find((d) => d.id == count.user_id);
           if (item) {
             item[count.category_id] = count.count || 0;
             item.total = (item.total || 0) + count.count;
           }
 
-          const totalRow = data.find((d) => d.id == "total");
+          const totalRow = userDataTable.find((d) => d.id == "total");
           if (totalRow) {
             totalRow[count.category_id] = ((totalRow[count.category_id] as number) || 0) + count.count;
             totalRow.total = (totalRow.total || 0) + count.count;
           }
         });
 
-        setData(data);
+        setData(userDataTable);
 
       } catch (error) {
         console.error("Error fetching data:", error);
