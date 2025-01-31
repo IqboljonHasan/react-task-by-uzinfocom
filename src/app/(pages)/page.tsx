@@ -11,8 +11,6 @@ import { Category, Counts, CountsData, User, UserName } from '@/lib/interfaces';
 import { TableSkeleton } from '@/components/table-skeleton';
 import Hero from '@/components/views/hero';
 import Features from '@/components/views/features';
-import Footer from '@/components/views/footer';
-
 
 const LandingPage = () => {
   const [categories, setCategories] = useState<Category[]>();
