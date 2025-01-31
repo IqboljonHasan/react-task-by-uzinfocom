@@ -340,7 +340,7 @@ const LandingPage = () => {
                 <SelectItem value="uz">
                   <div className="flex items-center gap-2">
                     <Image src="/images/flag-uz.png" width={16} height={16} alt="Uzbekistan Flag" />
-                    <span className="text-sm font-semibold"> O'zbek Tili</span>
+                    <span className="text-sm font-semibold"> O&apos;zbek Tili</span>
                   </div>
                 </SelectItem>
                 <SelectItem value="en">
