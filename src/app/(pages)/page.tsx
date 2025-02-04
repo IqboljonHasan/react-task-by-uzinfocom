@@ -4,7 +4,7 @@ import { DataTable as UserTable } from '@/components/data-table';
 import { apiUrl } from '@/lib/constants';
 import React, { useEffect, useState } from 'react';
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react"
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Category, Counts, CountsData, User, UserName } from '@/lib/interfaces';
@@ -47,16 +47,25 @@ const LandingPage = () => {
           id: item.id.toString(),
           accessorKey: item.id.toString(),
           header: ({ column }) => {
+            const isSorted = column.getIsSorted();
             return (
               <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                className={isSorted ? "text-[#5254F1]" : ""}
               >
                 {item.name}
-                <ArrowUpDown className="ml-2 h-4 w-4" />
+                {isSorted === "asc" ? (
+                  <ArrowUp className="ml-2 h-4 w-4" />
+                ) : isSorted === "desc" ? (
+                  <ArrowDown className="ml-2 h-4 w-4" />
+                ) : (
+                  <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
+                )}
               </Button>
             )
           },
+          enableSorting: true,
           cell: ({ row }) => {
             const count: number = row.getValue(item.id.toString());
             return <div className={"text-center p-4 leading-8 font-semibold text-sm " + (count > 0 ? "" : count == 0 ? 'bg-green-100 text-green-400' : 'bg-red-100 text-red-400')}>{count > 0 ? ("+" + count) : count}</div>;
@@ -82,9 +91,27 @@ const LandingPage = () => {
           {
             id: "number",
             accessorKey: "number",
-            header: "№",
             cell: ({ row }) => {
               return <div className="px-4 text-center font-semibold text-sm">{row.index + 1}</div>;
+            },
+            enableSorting: true,
+            header: ({ column }) => {
+              const isSorted = column.getIsSorted();
+              return (
+                <Button
+                  variant="ghost"
+                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                  №
+                  {isSorted === "asc" ? (
+                    <ArrowUp className="ml-2 h-4 w-4" />
+                  ) : isSorted === "desc" ? (
+                    <ArrowDown className="ml-2 h-4 w-4" />
+                  ) : (
+                    <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
+                  )}
+                </Button>
+              )
             },
           },
           {
@@ -119,16 +146,25 @@ const LandingPage = () => {
           id: "total",
           accessorKey: "total",
           header: ({ column }) => {
+            const isSorted = column.getIsSorted();
             return (
               <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                className={isSorted ? "text-[#5254F1]" : ""}
               >
-                (User&apos;s) Total
-                <ArrowUpDown className="ml-2 h-4 w-4" />
+                Total
+                {isSorted === "asc" ? (
+                  <ArrowUp className="ml-2 h-4 w-4" />
+                ) : isSorted === "desc" ? (
+                  <ArrowDown className="ml-2 h-4 w-4" />
+                ) : (
+                  <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
+                )}
               </Button>
             )
           },
+          enableSorting: true,
           cell: ({ row }) => {
             const total: number = row.getValue("total");
             return <div className="text-center font-semibold text-sm">{total}</div>;
